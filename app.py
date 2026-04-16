@@ -1,5 +1,6 @@
 from flask import Flask,render_template
 from flask_sqlalchemy import SQLAlchemy
+<<<<<<< HEAD
 import config
 from exts import db,migrate
 import models
@@ -7,6 +8,27 @@ app = Flask(__name__)
 app.config.from_object(config)
 db.init_app(app)
 migrate.init_app(app,db)
+=======
+
+import config
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy import MetaData
+
+app = Flask(__name__)
+app.config.from_object(config)
+
+# base类
+class Base(DeclarativeBase):
+    metadata = MetaData(naming_convention = {
+    "ix": "%(table_name)s_%(column_0_label)s",  # 索引
+    "uq": "%(table_name)s_%(column_0_name)s",   # 唯一约束
+    "ck": "%(table_name)s_%(constraint_name)s", # 检查约束
+    "fk": "%(table_name)s_%(column_0_name)s_%(referred_table_name)s",  # 外键约束
+    "pk": "%(table_name)s"                       # 主键约束
+})
+
+db = SQLAlchemy(app,model_class=Base)
+>>>>>>> 1cb536df2febb796a9b220fdbf1bca3cd1ac9565
 
 @app.route('/')
 def index():
