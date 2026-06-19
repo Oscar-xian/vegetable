@@ -2,9 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}|知了蔬菜 </title>
+    <title>{% block title %}{% endblock %}|万物蔬菜 </title>
     <link rel="stylesheet" href="{{ url_for('static',filename="base.css") }}">
     <script src="{{ url_for('static',filename="tailwind.js") }}"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     {% block head %}{% endblock %}
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -16,24 +17,49 @@
                 <div class="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center">
                     <span class="text-white font-bold text-xl">ZL</span>
                 </div>
-                <h1 class="text-xl font-bold text-gray-800">知了蔬菜</h1>
+                <h1 class="text-xl font-bold text-gray-800">万物蔬菜</h1>
             </div>
 
             <!-- 导航菜单 -->
             <nav class="hidden md:flex space-x-6">
                 <a href="/" class="text-gray-600 hover:text-green-600 font-medium transition-colors">首页</a>
-                <a href="#" class="text-gray-600 hover:text-green-600 font-medium transition-colors">发布</a>
+                <a href="/pub" class="text-gray-600 hover:text-green-600 font-medium transition-colors">发布</a>
             </nav>
 
-            <!-- 搜索和用户 -->
-            <div class="flex items-center space-x-4">
-                <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
-                    登录
-                </button>
-                <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
-                    注册
-                </button>
-            </div>
+            {% if user %}
+                <div class="relative group">
+                    <button class="flex items-center space-x-2 text-gray-700 hover:text-green-600 font-medium transition-colors focus:outline-none">
+                        <span>{{ user.username }}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
+                             stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+
+                    <!-- 悬浮下拉菜单：通过 group-hover 控制显示 -->
+                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 ease-in-out">
+                        <form method="POST" action="/logout">
+                            <button type="submit"
+                                    class="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors">
+                                退出登录
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            {% else %}
+                <!-- 搜索和用户 -->
+                <div class="flex items-center space-x-4">
+                    <button class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                        <a href="/login">登录</a>
+                    </button>
+                    <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full text-sm font-medium transition-colors">
+                        <a href="/register">注册</a>
+                    </button>
+                </div>
+            {% endif %}
+
+
         </div>
     </div>
 </header>
@@ -41,24 +67,20 @@
 <div class="bg-white border-b">
     <div class="container mx-auto px-4">
         <div class="flex overflow-x-auto py-3 space-x-6 hide-scrollbar">
-            <a href="#" class="category-tab active font-medium text-gray-900 whitespace-nowrap">全部</a>
-            <a href="#"
-               class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">豌豆</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">苦瓜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">蒲瓜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">茄子</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">西兰花</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">卷心菜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">灯笼椒</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">胡萝卜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">花菜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">黄瓜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">木瓜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">土豆</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">土豆</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">南瓜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">萝卜</a>
-            <a href="#" class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap">西红柿</a>
+            <!-- 全部按钮 -->
+            <a href="/"
+               class="category-tab {{ 'active' if category_id == None else '' }} font-medium text-gray-900 whitespace-nowrap">
+               全部
+            </a>
+
+            <!-- 分类循环 -->
+            {% for category in categories %}
+               <a href="/?category={{ category.id }}"
+                  class="category-tab font-medium text-gray-500 hover:text-gray-900 whitespace-nowrap
+                  {{ 'active' if category.id|string == category_id|string else '' }}">
+                  {{ category.name }}
+               </a>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -78,7 +100,7 @@
             </div>
         </div>
         <div class="mt-4 text-center text-gray-500 text-xs">
-            © 2026 知了蔬菜，保留所有权利。
+            © 2026 万物蔬菜，保留所有权利。
         </div>
     </div>
 </footer>
